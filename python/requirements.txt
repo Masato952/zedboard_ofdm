@@ -1,0 +1,4 @@
+numpy>=1.24
+matplotlib>=3.7
+# Only required for tx_ad9361.py / rx_ad9361.py:
+pyadi-iio>=0.0.21

@@ -1,0 +1,6 @@
+# Python
+__pycache__/
+*.pyc
+
+# Local build workspace (huge scratch clone of third_party/adi-hdl, not source)
+build/
