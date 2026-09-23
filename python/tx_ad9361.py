@@ -32,6 +32,15 @@ def main() -> None:
             "inside a chunk RX is actually capturing."
         ),
     )
+    p.add_argument(
+        "--print-iq",
+        action="store_true",
+        help=(
+            "Print the exact integer I/Q samples handed to sdr.tx(), for "
+            "comparing against an FPGA ILA capture of axi_ad9361's "
+            "dac_data_i0/dac_data_q0."
+        ),
+    )
     args = p.parse_args()
 
     try:
@@ -46,6 +55,18 @@ def main() -> None:
 
     # AD9361 DAC streaming commonly uses roughly +/- 2^14 full scale.
     iq = waveform * (2**14)
+
+    if args.print_iq:
+        n_frame = meta["frame_samples"]
+        print(
+            f"\n--- IQ samples about to be sent "
+            f"(first {n_frame} of {len(iq)}; trailing "
+            f"{len(iq) - n_frame} guard samples are all zero) ---"
+        )
+        print(f"{'idx':>5} {'I':>8} {'Q':>8}")
+        for i in range(n_frame):
+            print(f"{i:5d} {round(iq[i].real):8d} {round(iq[i].imag):8d}")
+        print("--- end IQ dump ---\n")
 
     sdr = adi.ad9361(uri=args.uri)
     sdr.sample_rate = int(args.fs)
